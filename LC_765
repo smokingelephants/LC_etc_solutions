@@ -1,0 +1,198 @@
+{
+    Problem name: Couples Holding Hands %{Problem name here}
+    Problem Description: "There are n couples sitting in 2n seats arranged in a row and want to hold hands. The people and seats are represented by an integer array row where row[i] is the ID of the person sitting in the ith seat. The couples are numbered in order, the first couple being (0, 1), the second couple being (2, 3), and so on with the last couple being (2n - 2, 2n - 1). Return the minimum number of swaps so that every couple is sitting side by side. A swap consists of choosing any two people, then they stand up and switch seats."
+    Problem Classification:
+    {
+        Problem Type: 
+        {
+            %{BestSum/HowSum/CanSum/UnionFind}
+            BestSum, UnionFind
+        }
+        Recurrence Type:
+        {
+            "%(suffix/prefix)/substring}
+            (suffix/prefix)
+        }
+    }
+    Algorithm Classification
+    {
+        Minimal Algorithm Type:
+        {
+            %{DFS/SCC/Topo_sort/BFS/Dijkstra/Bellman/Floyd_Warshall etc..}
+            DFS, Topo_sort, cycle detection
+        }
+        Dynamic Programming steps: 
+        {
+            Graph input mapping: 
+            {
+                %{conversion from input format to vertex parameters}
+                Input:
+                {
+                    row: List[int]
+                    description: "The people and seats are represented by an integer array row where row[i] is the ID of the person sitting in the ith seat. The couples are numbered in order, the first couple being (0, 1), the second couple being (2, 3), and so on with the last couple being (2n - 2, 2n - 1)."
+                }
+                Vertices: 
+                {
+                    %Subproblems (Define Vertex)
+                    %{
+                    %    minimal parameter set
+                    %    {
+                    %        param 0: {parameter definition and relation to problem input here}
+                    %        param 1: {parameter definition and relation to problem input here}
+                    %        ...
+                    %        param i: {parameter definition and relation to problem input here}
+                    %    }
+                    %}
+                    
+                    each element in list row[i], is a vertex, 
+                    param_i = row[i]
+                }
+                Edges: 
+                {
+                    %Edges and types descriptions:
+                    %{
+                    %    labeled/unlabeled: {list of Label(s) or Choices here}
+                    %    weighted/unweighted: {explanation here}
+                    %    Directed/Undirected: {explanation here}
+                    %    outdegree: {outdegree of vertex}
+                    %}
+
+                    edge e: (u, v)
+                    u: i
+                    v: ptn[pos[ptn[row[i]]]]
+                    ptn[i] = i + 1 if i is even; ptn[i] = i - 1 if i is odd
+                    
+                    Edges and types descriptions:
+                    {
+                        %more explanation needed here
+                        labeled/unlabeled: {edge to target location}
+                        weighted/unweighted: {unweighted}
+                        Directed/Undirected: {directed}
+                        outdegree: {2, but coded as 1}
+                    }
+                    
+                }
+                Costs: 
+                {
+                    %{if any}
+                    N/A: unweighted edges
+                }
+                other artifacts:
+                {
+                    %leaf nodes
+                    %cycles etc
+                    cycles define conflicts in seating positions of couples
+                }
+            }
+            Algorithm callbacks: 
+            {
+                %{if any callbacks needed}
+                N/A: with SCC
+            }
+            
+            Recurrence: 
+            {
+                %Recurrence relation here
+            }
+            Ordering: 
+            {
+                %bottom-up ordering of the problem solution
+            }
+
+            Algorithm output mapping: 
+            {
+                %{conversion from default output format to required output}
+                count = 0
+                for cycle found from SCC on graph:
+                    count += len(cycle)-1 
+                
+                count = count // 2
+                print(count)
+            }
+
+        }
+    }
+
+    Code and complexity:
+    {
+        Recursive code python (Top down approach): 
+        {
+            %{code here, graph based OR purely recursive, loops allowed if they call recursive functions}
+            row = [1,4,7,3,0,5,6,2,8,9] #[0,2,1,3]
+
+            #******graph setup
+            g = Graph()
+            
+            N = len(row)  # Example value for N
+            ptn = [0] * N
+            pos = [0] * N
+                        
+            for i in range(N):
+                ptn[i] = i + 1 if i % 2 == 0 else i - 1
+                pos[row[i]] = i
+            
+            for i in range(N):
+                if i != ptn[pos[ptn[row[i]]]]:
+                    g.addEdge(i, ptn[pos[ptn[row[i]]]]) #note vertex u and v
+            
+            #Algorithm call
+            cycles = g.SCC()    #call to find all strongly connected components
+
+            #output mapping
+            count = 0
+            for cycle in cycles:
+                count += len(cycle)-1 
+            
+            count = count // 2
+            print(count)
+        }
+        Dynamic Programming Code python (Bottom-Up approach): 
+        {
+            %{code here, no recursive calls}
+            def minSwapsCouples(row):
+                res = 0
+                N = len(row)
+                
+                ptn = [0] * N
+                pos = [0] * N
+                
+                for i in range(N):
+                    ptn[i] = i + 1 if i % 2 == 0 else i - 1
+                    pos[row[i]] = i
+                
+                for i in range(N):
+                    while i != ptn[pos[ptn[row[i]]]]:
+                        j = ptn[pos[ptn[row[i]]]]
+                        row[i], row[j] = row[j], row[i]
+                        pos[row[i]], pos[row[j]] = pos[row[j]], pos[row[i]]
+                        res += 1
+                
+                return res
+
+            # Example usage:
+            row = [0, 2, 1, 3]
+            print(minSwapsCouples(row))  # Output should match the expected result based on input
+
+
+        }
+        Time Complexity: {O(V+E) from SCC, plus some O(V)  #value here}
+    }
+    Example:
+    {
+        Example 1: 
+        {
+            intput:
+            {
+                %example input here
+                row = [5,4,2,6,3,1,0,7]
+            }
+            graph: 
+            {
+                %ASCII or image url to graph diagram
+                Cycles: [[3, 4, 6], [2, 7, 5]]
+    
+            }
+        }
+
+    }
+}

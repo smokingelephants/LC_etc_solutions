@@ -1,0 +1,190 @@
+{
+    Problem name: Knapsack 0/1%{Problem name here}
+    Problem Description: "Given N items where each item has some weight and profit associated with it and also given a bag with capacity W, [i.e., the bag can hold at most W weight in it]. The task is to put the items into the bag such that the sum of profits associated with them is the maximum possible. "
+
+    Problem Classification:
+    {
+        Problem Type: 
+        {
+            %{BestSum/HowSum/CanSum/UnionFind}
+		BestSum
+        }
+        Recurrence Type:
+        {
+            "%(suffix/prefix)/substring}
+		(suffix/prefix)
+        }
+    }
+    Algorithm Classification
+    {
+        Minimal Algorithm Type:
+        {
+            %{DFS/SCC/Topo_sort/BFS/Dijkstra/Bellman/Floyd_Warshall etc..}
+		sssp (bellman, shortest path dag), dfs, bfs
+        }
+        Dynamic Programming steps: 
+        {
+            Graph input mapping: 
+            {
+                %{conversion from input format to vertex parameters}
+                Input:
+                {
+			N: number of elements
+                   	prices[]: {price of ith element, i in N}
+			weights[]: {weight of the ith element, i in N}
+			max_wt: max capacity of knapsack
+                }
+                Vertices: 
+                {
+                    %Subproblems (Define Vertex)
+                    %{
+                    %    minimal parameter set
+                    %    {
+                    %        param 0: {parameter definition and relation to problem input here}
+                    %        param 1: {parameter definition and relation to problem input here}
+                    %        ...
+                    %        param i: {parameter definition and relation to problem input here}
+                    %    }
+                    %}
+
+			param_0: id of element (id in N)
+			param_1: current weight of knapsack (sum of weights upto id element)
+                    
+                }
+                Edges: 
+                {
+                    %Edges and types descriptions:
+                    %{
+                    %    labeled/unlabeled: {list of Label(s) or Choices here}
+                    %    weighted/unweighted: {explanation here}
+                    %    Directed/Undirected: {explanation here}
+                    %    outdegree: {outdegree of vertex}
+                    %}
+
+                    edge e: (u, v) "pick"
+ 			u: (id, current_wt)
+			v: (id+1, current_wt+ weights[id])
+			cost: price[id]
+
+                    edge e: (u, v) "not pick"
+ 			u: (id, current_wt)
+			v: (id+1, current_wt)
+			cost: 0
+                    
+                    Edges and types descriptions:
+                    {
+                        %more explanation needed here
+                        labeled/unlabeled: {labeled, {pick, notpick}}
+                        weighted/unweighted: {weighted, costs define prices}
+                        Directed/Undirected: {directed}
+                        outdegree: {2}
+                    }
+                    
+                }
+                Costs: 
+                {
+                    %{if any}
+			explained above
+                }
+                other artifacts:
+                {
+                    %leaf nodes
+                    %cycles etc
+			branch: a candidate solution with a subset of chosen elements
+                }
+            }
+            Algorithm callbacks: 
+            {
+                %{if any callbacks needed}
+            }
+            
+            Recurrence: 
+            {
+                %Recurrence relation here
+            }
+            Ordering: 
+            {
+                %bottom-up ordering of the problem solution
+		
+            }
+
+            Algorithm output mapping: 
+            {
+                %{conversion from default output format to required output}
+ 
+            }
+
+        }
+    }
+
+    Code and complexity:
+    {
+        Recursive code python (Top down approach): 
+        {
+            %{code here, graph based OR purely recursive, loops allowed if they call recursive functions}
+
+		N = 3
+weights = [0.2,0.1,0.3]
+prices = [25,10,20]
+max_wt = 0.5
+
+def recf(id = 0, current_wt = 0):
+    #base case
+    if id >= N:
+        if(current_wt > max_wt):
+            return -float('inf')
+        else:
+            return 0
+    
+    
+    #pick
+    val_pick = prices[id] + recf(id+1, current_wt + weights[id])
+    
+    
+    #not pick
+    val_not_pick = 0 + recf(id+1, current_wt)
+    
+    
+    return max(val_pick, val_not_pick)
+    
+#main
+
+
+print(recf(1,0.0))
+
+        }
+        Dynamic Programming Code python (Bottom-Up approach): 
+        {
+            %{code here, no recursive calls}
+          for i in range(n + 1):
+        for w in range(W + 1):
+            if i == 0 or w == 0:
+                K[i][w] = 0
+            elif wt[i-1] <= w:
+                K[i][w] = max(val[i-1]
+                              + K[i-1][w-wt[i-1]],
+                              K[i-1][w])
+            else:
+                K[i][w] = K[i-1][w]
+
+           
+        }
+        Time Complexity: {#value here}
+    }
+    Example:
+    {
+        Example 1: 
+        {
+            intput:
+            {
+                %example input here
+            }
+            graph: 
+            {
+                %ASCII or image url to graph diagram
+    
+            }
+        }
+
+    }
+}
